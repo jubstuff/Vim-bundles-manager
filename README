@@ -1,0 +1,4 @@
+# Vim bundles manager
+
+Script to update all my Vim plugins.
+It assumes you have pathogen installed.
