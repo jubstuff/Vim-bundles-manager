@@ -2,3 +2,5 @@
 
 Script to update all my Vim plugins.
 It assumes you have pathogen installed.
+
+Inspired from http://tammersaleh.com/posts/the-modern-vim-config-with-pathogen
