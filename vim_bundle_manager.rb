@@ -1,5 +1,6 @@
 # vim_bundle_manager
 require 'fileutils'
+require 'set'
 
 
 class VimBundleManager
@@ -24,10 +25,10 @@ class VimBundleManager
     # "git://github.com/tpope/vim-repeat.git",
     "git://github.com/tpope/vim-surround.git",
     # "git://github.com/tpope/vim-vividchalk.git",
-    # "git://github.com/tsaleh/taskpaper.vim.git",
-    # "git://github.com/tsaleh/vim-matchit.git",
-    # "git://github.com/tsaleh/vim-shoulda.git",
-    # "git://github.com/tsaleh/vim-tcomment.git",
+    "git://github.com/tsaleh/taskpaper.vim.git",
+    "git://github.com/tsaleh/vim-matchit.git",
+    "git://github.com/tsaleh/vim-shoulda.git",
+    "git://github.com/tsaleh/vim-tcomment.git",
     # "git://github.com/tsaleh/vim-tmux.git",
     # "git://github.com/vim-ruby/vim-ruby.git",
     # "git://github.com/vim-scripts/Gist.vim.git",
@@ -64,12 +65,48 @@ class VimBundleManager
     end
   end
 
-  private
+  def list_bundles( which=:installed )
+    installed = Dir["*"]
+    case which
+    when :all
+      all = GIT_BUNDLES.map { |r| get_bundle_name(r) }
+      puts "All plugins [ (*) => Installed ]"
+      all.each_with_index do |plugin, i|
+        print "#{i} - #{plugin}"
+        print "(*)" if installed.include? plugin
+        print "\n"
+      end
+    when :installed
+      puts "Installed plugins"
+      installed.each_with_index do |plugin, i|
+        puts "#{i} - #{plugin}"
+      end
+    when :disabled
+      not_installed = all.to_set - installed.to_set
+      puts "Not installed plugins"
+      not_installed.each_with_index do |plugin, i|
+        puts "#{i} - #{plugin}"
+      end
+    end
 
+
+
+  end
+
+  private
+    ##
+    # Extract plugin name from git url
+    #
+    # Example
+    # "git://github.com/godlygeek/tabular.git" -> tabular
+    # 
     def get_bundle_name(url)
       url.split('/').last.sub(/\.git$/, '')
     end
 
+    ##
+    # Clone plugin from git repository
+    #
     def clone_bundle(url)
       dir = get_bundle_name(url)
       puts "unpacking #{url} into #{dir}"
