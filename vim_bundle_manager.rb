@@ -37,6 +37,7 @@ class VimBundleManager
   def initialize(vim_home_path="")
     user = ENV["USER"]
     vim_home = vim_home_path.empty? ? "/home/#{user}/vimtest" : vim_home_path
+    @git_bundles = create_bundle_hash
 
     @bundles_dir = File.join(vim_home, "bundle")
     FileUtils.cd(@bundles_dir)
@@ -86,6 +87,19 @@ class VimBundleManager
         puts plugin
       end
     end
+
+    def create_bundle_hash
+      @git_bundles = {}
+      File.open("git_bundles") do |f|
+        while git_repo = f.gets
+          git_repo.chomp!
+          name = get_bundle_name(git_repo)
+          @git_bundles[name] = git_repo
+        end
+      end
+      @git_bundles
+    end
+
     ##
     # Extract plugin name from git url
     #
