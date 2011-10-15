@@ -1,6 +1,5 @@
 # vim_bundle_manager
 require 'fileutils'
-require 'set'
 
 
 class VimBundleManager
@@ -65,31 +64,26 @@ class VimBundleManager
     end
   end
 
-  def list_bundles( which=:installed )
+  def list_bundles( which=:enabled )
+    all = GIT_BUNDLES.map { |r| get_bundle_name(r) }
     enabled = Dir["*"]
+    disabled = all - enabled
     case which
     when :all
-      all = GIT_BUNDLES.map { |r| get_bundle_name(r) }
-      puts "All plugins [ (*) => Installed ]"
-      all.each_with_index do |plugin, i|
-        print "#{i} - #{plugin}"
-        print "(*)" if installed.include? plugin
-        print "\n"
-      end
+      list( "Enabled plugins", enabled )
+      list( "Disabled plugins", disabled )
     when :enabled
       list( "Enabled plugins", enabled )
     when :disabled
-      not_installed = all.to_set - installed.to_set
-      list( "Not installed plugins", not_installed )
+      list( "Disabled plugins", disabled )
     end
   end
 
   private
     def list( msg, plugin_list )
-      puts msg
-      plugin_list.each_with_index do |plugin, i|
-        print "#{i} - #{plugin}"
-        print "\n"
+      puts "==#{msg}=="
+      plugin_list.each do |plugin|
+        puts plugin
       end
     end
     ##
