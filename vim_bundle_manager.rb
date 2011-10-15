@@ -66,7 +66,7 @@ class VimBundleManager
   end
 
   def list_bundles( which=:installed )
-    installed = Dir["*"]
+    enabled = Dir["*"]
     case which
     when :all
       all = GIT_BUNDLES.map { |r| get_bundle_name(r) }
@@ -76,24 +76,22 @@ class VimBundleManager
         print "(*)" if installed.include? plugin
         print "\n"
       end
-    when :installed
-      puts "Installed plugins"
-      installed.each_with_index do |plugin, i|
-        puts "#{i} - #{plugin}"
-      end
+    when :enabled
+      list( "Enabled plugins", enabled )
     when :disabled
       not_installed = all.to_set - installed.to_set
-      puts "Not installed plugins"
-      not_installed.each_with_index do |plugin, i|
-        puts "#{i} - #{plugin}"
-      end
+      list( "Not installed plugins", not_installed )
     end
-
-
-
   end
 
   private
+    def list( msg, plugin_list )
+      puts msg
+      plugin_list.each_with_index do |plugin, i|
+        print "#{i} - #{plugin}"
+        print "\n"
+      end
+    end
     ##
     # Extract plugin name from git url
     #
